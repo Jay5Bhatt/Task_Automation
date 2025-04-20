@@ -28,7 +28,7 @@ jobs:
           pytest --cov=. --cov-report=html
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: coverage-report
           path: htmlcov
@@ -46,4 +46,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./htmlcov  # or ./site if you want
+          publish_dir: ./htmlcov
