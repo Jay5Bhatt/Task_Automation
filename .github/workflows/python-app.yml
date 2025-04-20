@@ -1,6 +1,8 @@
-name: Python App
+name: Python App CI
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -19,7 +21,29 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-cov
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
-          pytest
+          pytest --cov=. --cov-report=html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: htmlcov
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./htmlcov  # or ./site if you want
